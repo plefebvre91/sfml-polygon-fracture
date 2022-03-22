@@ -35,29 +35,29 @@ FracturableShape::FracturableShape(const sf::ConvexShape& shape):
   // Store the shape points in a vector, and create empty fragments
   for(std::size_t i=0; i<nbPoints; i++) {
     _points.push_back(shape.getPoint(i));
-    _fragments.push_back(sf::ConvexShape());
+
+    sf::ConvexShape fragment;
+    fragment.setPointCount(3);
+    fragment.setFillColor(_original.getFillColor());
+    fragment.setOutlineThickness(_original.getOutlineThickness());
+    fragment.setOutlineColor(_original.getOutlineColor());
+
+    _fragments.push_back(fragment);
   }
 
   // Compute its center position
   _center = utils::getCenter(_points);
   _center += position;
 
-  // Initialize fragments properties
-  for(auto& fragment: _fragments) {
-    fragment.setPointCount(3);
-    fragment.setPoint(0, _center);
-    fragment.setFillColor(_original.getFillColor());
-    fragment.setOutlineThickness(_original.getOutlineThickness());
-    fragment.setOutlineColor(_original.getOutlineColor());
-  }
-
   // Create the first N-1 fragments points...
   for(std::size_t i=1; i<nbPoints; i++) {
+    _fragments[i-1].setPoint(0, _center);
     _fragments[i-1].setPoint(1, _points[i-1] + position);
     _fragments[i-1].setPoint(2, _points[i] + position);
   }
 
   // ... and the last one
+  _fragments.back().setPoint(0, _center);
   _fragments.back().setPoint(1, _points.back() + position);
   _fragments.back().setPoint(2, _points.front() + position);
 
