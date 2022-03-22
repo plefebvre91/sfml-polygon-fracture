@@ -21,36 +21,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
 
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef FRACTURABLE_HPP
+#define FRACTURABLE_HPP
 
 #include <SFML/Graphics.hpp>
 
-namespace utils {
+#define SPEED 100.0f
+
+class FracturableShape {
+public:
   /**
-   * Compute square distance between 2 points
+   * Constructor
+   * @param the parent shape
    */
-  float sd(const sf::Vector2f& a, const sf::Vector2f& b);
+  FracturableShape(const sf::ConvexShape& shape);
 
   /**
-   * Compute vector coords from 2 points
+   * Update shape movement (called at each frame)
+   * @param ellapsed time since last update
    */
-  sf::Vector2f v(const sf::Vector2f& a, const sf::Vector2f& b);
+  void update(float delta);
 
   /**
-   * Compute normalized vector coords from 2 points
+   * Split the shape
    */
-  sf::Vector2f nv(const sf::Vector2f& a, const sf::Vector2f& b);
+  void fracture();
 
   /**
-   * Get isobarycenter from a set of points
+   * Draw the shape
+   * @param SFML window
    */
-  sf::Vector2f getCenter(const std::vector<sf::Vector2f>& points);
+  void draw(sf::RenderWindow& window);
 
-  /**
-   * Get isobarycenter from a shape
-   */
-  sf::Vector2f getCenter(const sf::ConvexShape& shape);
-}
+private:
+  sf::ConvexShape _original;
+  std::vector<sf::ConvexShape> _fragments;
+  std::vector<sf::Vector2f> _points;
+  std::vector<sf::Vector2f> _directions;
+  sf::Vector2f _center;
+  bool _fractured;
+};
 
 #endif
